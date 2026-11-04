@@ -61,7 +61,23 @@ function cottageArt(){
  for(let i=0;i<9;i++){const x=90+i*78;s+='<circle class="fillable" fill="#fff" cx="'+x+'" cy="'+(115+(i%3)*18)+'" r="13"/><path fill="none" d="M'+(x-24)+' '+(115+(i%3)*18)+' q24 -25 48 0"/>'}
  return svgPage(s)
 }
-const pages=[{name:"Celestial Mandala",emoji:"✿",svg:mandalaArt()},{name:"Enchanted Butterfly",emoji:"❀",svg:butterflyArt()},{name:"Wildflower Bouquet",emoji:"❋",svg:bouquetArt()},{name:"The Storybook Cottage",emoji:"⌂",svg:cottageArt()}]
+function moonGardenArt(){
+ let s='<path class="fillable" fill="#fff" d="M520 90 A105 105 0 1 0 650 250 A82 82 0 1 1 520 90Z"/><path fill="none" d="M520 90 A105 105 0 1 0 650 250"/>';
+ for(let i=0;i<34;i++){const a=i*Math.PI*2/34,x=400+Math.cos(a)*245,y=310+Math.sin(a)*205,r=3+(i%4);s+='<path class="fillable" fill="#fff" d="M'+x+' '+y+' q'+(-Math.sin(a)*r*3)+' '+(Math.cos(a)*r*3)+' '+(-Math.cos(a)*r*2)+' '+(-Math.sin(a)*r*2)+' q'+(Math.sin(a)*r*3)+' '+(-Math.cos(a)*r*3)+' '+(Math.cos(a)*r*2)+' '+(Math.sin(a)*r*2)+'Z"/>'}
+ for(let i=0;i<9;i++){const x=75+i*82,y=465+(i%3)*18;s+='<path fill="none" stroke-width="3" d="M'+x+' 570 Q'+(x-18)+' 480 '+(x+12)+' '+y+'"/><path class="fillable" fill="#fff" d="M'+(x+8)+' '+(y+45)+' q-52 -42 -60 -4 q22 43 60 4Z"/><path class="fillable" fill="#fff" d="M'+(x+5)+' '+(y+15)+' q45 -48 62 -12 q-20 39 -62 12Z"/>'+flowerAt(x+12,y,16+(i%3)*4,7)}
+ for(let i=0;i<7;i++){const x=120+i*90,y=115+(i%2)*35;s+='<path fill="none" d="M'+x+' '+y+' q18 -25 36 0 q-18 25 -36 0Z"/><circle class="fillable" fill="#fff" cx="'+(x+18)+'" cy="'+y+'" r="7"/>'}
+ s+='<path fill="none" stroke-width="2.5" d="M45 575 Q180 540 300 570 T560 565 T780 570"/>';return svgPage(s)
+}
+function koiPondArt(){
+ let s='<path class="fillable" fill="#fff" d="M90 300 C130 110 340 70 505 130 C700 200 730 405 575 500 C420 590 170 515 90 300Z"/>';
+ for(let i=0;i<5;i++){const y=175+i*75;s+='<path fill="none" stroke-width="2" d="M125 '+y+' Q260 '+(y-35)+' 395 '+y+' T675 '+y+'"/>'}
+ function koi(x,y,scale,flip){return '<g transform="translate('+x+' '+y+') scale('+scale*flip+' '+scale+')"><path class="fillable" fill="#fff" d="M-90 0 Q-55 -48 10 -30 Q48 -22 65 0 Q48 22 10 30 Q-55 48 -90 0Z"/><path class="fillable" fill="#fff" d="M-82 0 Q-120 -48 -135 -35 Q-125 0 -135 35 Q-120 48 -82 0Z"/><path fill="none" d="M-20 -26 Q-5 0 -20 26 M18 -23 Q34 0 18 23"/><circle cx="45" cy="-7" r="4" fill="#26232b"/><path class="fillable" fill="#fff" d="M-45 -25 q-12 -35 12 -40 q22 20 0 42Z"/><path class="fillable" fill="#fff" d="M-45 25 q-12 35 12 40 q22 -20 0 -42Z"/><path fill="none" d="M-60 -8 q-12 8 0 16"/></g>'}
+ s+=koi(310,245,1.05,1)+koi(520,390,.72,-1)+koi(205,420,.58,1);
+ for(let i=0;i<12;i++){const x=115+i*50,y=115+(i%4)*18;s+='<path class="fillable" fill="#fff" d="M'+x+' '+y+' q-35 -42 -52 -8 q20 39 52 8Z"/><path fill="none" d="M'+x+' '+y+' q-20 -20 -42 -8"/>'}
+ for(let i=0;i<8;i++){const x=120+i*78,y=520-(i%3)*18;s+='<path fill="none" d="M'+x+' 570 q-12 -45 0 -70"/><path class="fillable" fill="#fff" d="M'+x+' '+(y+25)+' q-38 -38 -50 -4 q20 38 50 4Z"/>'}
+ return svgPage(s)
+}
+const pages=[{name:"Celestial Mandala",emoji:"✿",svg:mandalaArt()},{name:"Enchanted Butterfly",emoji:"❀",svg:butterflyArt()},{name:"Wildflower Bouquet",emoji:"❋",svg:bouquetArt()},{name:"The Storybook Cottage",emoji:"⌂",svg:cottageArt()},{name:"Moonlit Garden",emoji:"☾",svg:moonGardenArt()},{name:"Koi Pond",emoji:"❀",svg:koiPondArt()}]
 const colors=["#f47d70","#f5b84b","#f8dc72","#8fc79f","#62b8b0","#6e9ed2","#9b8bd0","#d69bc4","#b77e5c","#f3a6a0","#a8c6d8","#263b34","#ffffff","#202b31","#dce9df","#f0dfcc"];
 let pageIndex=0,color=colors[0],tool="fill",undoStack=[],redoStack=[],drawing=false,strokePath=null;
 const $=id=>document.getElementById(id),board=$("artboard");
