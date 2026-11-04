@@ -99,7 +99,7 @@ window.addEventListener("resize",()=>resizePaintLayer(true));
 $("fillTool").onclick=()=>setTool("fill");$("brushTool").onclick=()=>setTool("brush");$("eraserTool").onclick=()=>setTool("eraser");
 $("undoBtn").onclick=()=>{if(!undoStack.length)return;redoStack.push(captureState());restoreState(undoStack.pop());buttons()};
 $("redoBtn").onclick=()=>{if(!redoStack.length)return;undoStack.push(captureState());restoreState(redoStack.pop());buttons()};
-$("clearBtn").onclick=()=>{snapshot();loadPage(pageIndex);toast("Page reset")};
+$("clearBtn").onclick=()=>{snapshot();board.innerHTML=pages[pageIndex].svg;attachPaintLayer();$("currentTitle").textContent=pages[pageIndex].name;buttons();toast("Page reset — undo is available")};
 $("newBtn").onclick=()=>{loadPage((pageIndex+1)%pages.length);toast("A fresh page is ready!")};
 $("customColor").oninput=e=>selectColor(e.target.value);
 $("saveLocalBtn").onclick=()=>{try{const a=JSON.parse(localStorage.getItem("colorjoy-saved")||"[]");a.push({name:$("currentTitle").textContent,svg:board.querySelector("svg")?new XMLSerializer().serializeToString(board.querySelector("svg")):"",painting:paintLayer?paintLayer.toDataURL("image/png"):null,date:new Date().toISOString()});localStorage.setItem("colorjoy-saved",JSON.stringify(a.slice(-20)));toast("Artwork saved on this device")}catch(e){toast("Device storage is full")}};
