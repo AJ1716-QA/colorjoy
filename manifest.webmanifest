@@ -1,12 +1,12 @@
 {
-  "name": "ColorJoy — Color your happy place",
+  "name": "ColorJoy Atelier — Digital Art Studio",
   "short_name": "ColorJoy",
   "description": "A creative coloring studio for kids and adults.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f8f7f2",
-  "theme_color": "#f8f7f2",
+  "background_color": "#0b0c11",
+  "theme_color": "#0b0c11",
   "orientation": "any",
   "icons": [
     {
