@@ -102,7 +102,7 @@ function guidedArt(index){
  if(level===2){for(let i=0;i<12;i++){const x=130+i*49;s+='<path fill="none" d="M'+x+' 520 q-22 -45 0 -75 q22 30 0 75 M'+x+' 495 l-20 -18 m20 0 l20 -18"/>'}}
  return svgPage(s);
 }
-function loadGuidedDesign(i){pageIndex=-1;board.innerHTML=guidedArt(i);attachPaintLayer();$("currentTitle").textContent=guideSets[Object.keys(guideSets)[Math.floor(i/10)]][i%10];undoStack=[];redoStack=[];buttons();toast("Guided design loaded — make it your own");}
+let activeGuideIndex=null;function loadGuidedDesign(i){activeGuideIndex=i;pageIndex=-1;board.innerHTML=guidedArt(i);attachPaintLayer();$("currentTitle").textContent=guideSets[Object.keys(guideSets)[Math.floor(i/10)]][i%10];undoStack=[];redoStack=[];buttons();toast("Guided design loaded — make it your own");}
 const colors=["#f47d70","#f5b84b","#f8dc72","#8fc79f","#62b8b0","#6e9ed2","#9b8bd0","#d69bc4","#b77e5c","#f3a6a0","#a8c6d8","#263b34","#ffffff","#202b31","#dce9df","#f0dfcc"];
 let pageIndex=0,color=colors[0],tool="fill",undoStack=[],redoStack=[],drawing=false,strokePath=null;
 const $=id=>document.getElementById(id),board=$("artboard");
@@ -113,7 +113,7 @@ function captureState(){const svg=board.querySelector("svg");return{svg:svg?new 
 function restoreState(state){if(!state)return;activeCanvasRatio=state.ratio||"4/3";board.style.aspectRatio=activeCanvasRatio;board.innerHTML=state.svg;attachPaintLayer();$("currentTitle").textContent=state.title||"Untitled canvas";if(state.paint){const img=new Image();img.onload=()=>paintCtx.drawImage(img,0,0,paintLayer.width/2,paintLayer.height/2);img.src=state.paint}}
 function snapshot(){undoStack.push(captureState());if(undoStack.length>40)undoStack.shift();redoStack=[];buttons()}
 function setTool(t){tool=t;["fillTool","brushTool","eraserTool"].forEach(id=>$(id).classList.toggle("active",id===({fill:"fillTool",brush:"brushTool",eraser:"eraserTool"}[t])));const layer=board.querySelector(".paint-layer");if(layer)layer.style.pointerEvents=t==="fill"?"none":"auto";}
-function loadPage(i){pageIndex=i;board.innerHTML=pages[i].svg;attachPaintLayer();$("currentTitle").textContent=pages[i].name;undoStack=[];redoStack=[];buttons();renderGallery()}
+function loadPage(i){activeGuideIndex=null;pageIndex=i;board.innerHTML=pages[i].svg;attachPaintLayer();$("currentTitle").textContent=pages[i].name;undoStack=[];redoStack=[];buttons();renderGallery()}
 function renderGallery(){$("gallery").innerHTML=pages.map((p,i)=>'<button class="page-card '+(i===pageIndex?"selected":"")+'" data-i="'+i+'"><div class="thumb">'+p.svg+'</div><b>'+p.name+'</b><small>Detailed line art</small></button>').join("");$("gallery").querySelectorAll("button").forEach(b=>b.onclick=()=>loadPage(+b.dataset.i))}
 function renderPalette(){$("palette").innerHTML=colors.map(c=>'<button class="swatch '+(c===color?"selected":"")+'" style="background:'+c+'" data-c="'+c+'" aria-label="Color '+c+'"></button>').join("");$("palette").querySelectorAll("button").forEach(b=>b.onclick=()=>selectColor(b.dataset.c))}
 function selectColor(c){color=c;$("customColor").value=c;renderPalette()}
@@ -140,7 +140,7 @@ window.addEventListener("resize",()=>resizePaintLayer(true));
 $("fillTool").onclick=()=>setTool("fill");$("brushTool").onclick=()=>setTool("brush");$("eraserTool").onclick=()=>setTool("eraser");
 $("undoBtn").onclick=()=>{if(!undoStack.length)return;redoStack.push(captureState());restoreState(undoStack.pop());buttons()};
 $("redoBtn").onclick=()=>{if(!redoStack.length)return;undoStack.push(captureState());restoreState(redoStack.pop());buttons()};
-$("clearBtn").onclick=()=>{snapshot();board.innerHTML=pages[pageIndex].svg;attachPaintLayer();$("currentTitle").textContent=pages[pageIndex].name;buttons();toast("Page reset — undo is available")};
+$("clearBtn").onclick=()=>{snapshot();if(activeGuideIndex!==null){board.innerHTML=guidedArt(activeGuideIndex);$("currentTitle").textContent=guideSets[Object.keys(guideSets)[Math.floor(activeGuideIndex/10)]][activeGuideIndex%10]}else{board.innerHTML=pages[pageIndex].svg;$("currentTitle").textContent=pages[pageIndex].name}attachPaintLayer();buttons();toast("Page reset — undo is available")};
 $("newBtn").onclick=()=>{loadPage((pageIndex+1)%pages.length);toast("A fresh page is ready!")};
 $("customColor").oninput=e=>selectColor(e.target.value);
 $("saveLocalBtn").onclick=()=>{try{const a=JSON.parse(localStorage.getItem("colorjoy-saved")||"[]");a.push({name:$("currentTitle").textContent,svg:board.querySelector("svg")?new XMLSerializer().serializeToString(board.querySelector("svg")):"",painting:paintLayer?paintLayer.toDataURL("image/png"):null,date:new Date().toISOString()});localStorage.setItem("colorjoy-saved",JSON.stringify(a.slice(-20)));toast("Artwork saved on this device")}catch(e){toast("Device storage is full")}};
