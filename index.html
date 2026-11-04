@@ -82,6 +82,7 @@ const colors=["#f47d70","#f5b84b","#f8dc72","#8fc79f","#62b8b0","#6e9ed2","#9b8b
 let pageIndex=0,color=colors[0],tool="fill",undoStack=[],redoStack=[],drawing=false,strokePath=null;
 const $=id=>document.getElementById(id),board=$("artboard");
 function toast(s){const t=$("toast");t.textContent=s;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),1800)}
+window.addEventListener("error",e=>{const t=document.getElementById("toast");if(t){t.textContent="App error: "+(e.message||"JavaScript failed");t.classList.add("show")}});window.addEventListener("unhandledrejection",e=>{const t=document.getElementById("toast");if(t){t.textContent="App error: "+String(e.reason||"Promise failed");t.classList.add("show")}});
 function buttons(){$("undoBtn").disabled=!undoStack.length;$("redoBtn").disabled=!redoStack.length}
 function captureState(){const svg=board.querySelector("svg");return{svg:svg?new XMLSerializer().serializeToString(svg):"",paint:paintLayer?paintLayer.toDataURL("image/png"):null,title:$("currentTitle").textContent,ratio:activeCanvasRatio}}
 function restoreState(state){if(!state)return;activeCanvasRatio=state.ratio||"4/3";board.style.aspectRatio=activeCanvasRatio;board.innerHTML=state.svg;attachPaintLayer();$("currentTitle").textContent=state.title||"Untitled canvas";if(state.paint){const img=new Image();img.onload=()=>paintCtx.drawImage(img,0,0,paintLayer.width/2,paintLayer.height/2);img.src=state.paint}}
